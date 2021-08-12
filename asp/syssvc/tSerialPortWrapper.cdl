@@ -1,0 +1,57 @@
+/*
+ *  @(#) $Id: tSerialPort.cdl 439 2009-07-22 09:08:30Z ertl-takuya $
+ */
+
+/**** Wrapper 実装  *****/
+import_C( "syssvc/serial.h" );
+
+/*
+ *		シリアルインタフェースドライバのコンポーネント記述ファイル
+ *
+ *      本来の TECS 版ではなく、既存の ASP 用 serial の単純なラッパーである．
+ *      手っ取り早く tSample を実現するために、ラッパーとしている．
+ */
+
+// +-----------------------------
+// typedef struct {
+// 	uint_t		reacnt;				/* 受信バッファ中の文字数 */
+// 	uint_t		wricnt;				/* 送信バッファ中の文字数 */
+// } T_SERIAL_RPOR;
+// -----------------------------+
+
+signature sSerialPort {
+	ER		open(void);
+	ER		close(void);
+	ER_UINT	read([out,size_is(length)] char_t *buffer, [in] uint_t length);
+	ER_UINT	write([in,size_is(length)] const char_t *buffer, [in] uint_t length);
+	ER		control([in] uint_t ioControl);
+	ER		refer([out] T_SERIAL_RPOR *pk_rpor);
+};
+
+signature snSerialPort {
+	bool_t	getChar([out] char_t *p_char);
+};
+
+// +------------------------------------------
+// /* シリアルインタフェースドライバの動作制御用のための定数 */
+// const uint_t IOCTL_NULL	= 0;		/* 指定なし */
+// const uint_t IOCTL_ECHO	= 0x0001;	/* 受信した文字をエコーバック */
+// const uint_t IOCTL_CRLF	= 0x0010;	/* LFを送信する前にCRを付加 */
+// const uint_t IOCTL_FCSND = 0x0100;	/* 送信に対してフロー制御を行う */
+// const uint_t IOCTL_FCANY = 0x0200;	/* どのような文字でも送信再開 */
+// const uint_t IOCTL_FCRCV = 0x0400;	/* 受信に対してフロー制御を行う */
+// ------------------------------------------+
+
+celltype tSerialPortWrapper {
+	entry sSerialPort	eSerialPort;
+	entry snSerialPort	enSerialPort;
+// +---  ---------------------
+//  	call sSIOPort		cSIOPort;	/* 簡易SIOドライバとの接続 */
+// 	entry siSIOCBR		eiSIOCBR;
+// 	call sSemaphore  cSendSemaphore;
+// 	call siSemaphore ciSendSemaphore;
+// ----------------------  ---+	
+    attr {
+		ID   portid;
+	};
+};

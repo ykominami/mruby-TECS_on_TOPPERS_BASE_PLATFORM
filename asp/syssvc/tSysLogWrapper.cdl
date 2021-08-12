@@ -1,0 +1,20 @@
+/*
+ *  @(#) $Id: tSysLog.cdl 1146 2010-10-13 07:36:12Z ritsumei-takuya $
+ */
+
+/*
+ *		システムログ機能のコンポーネント記述ファイル
+ */
+import_C("t_syslog.h");
+
+signature sSysLog {
+	ER		write([in] uint_t priority, [in] const SYSLOG *p_syslog);
+	ER_UINT	read([out] SYSLOG *p_syslog);
+	ER		mask([in] uint_t logMask, [in] uint_t lowMask);
+	ER		refer([out] T_SYSLOG_RLOG *pk_rlog);
+};
+
+[singleton]
+celltype tSysLogWrapper {
+	entry sSysLog	eSysLog;
+};
