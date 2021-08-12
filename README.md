@@ -165,6 +165,132 @@ TOPPERS BASE PLATFORM に合わせたクロスビルド用のスクリプト
 
     % rake MRUBY_CONFIG=toppers_arm_m7
 
+## TECS BASE PLATFORM へ mruby VM を組み込む
+
+いよいよ本題へ入っていきます。TOPERS BASE PLATFORM に mruby VM を組込みます。
+これをするために、既存の ROM 化した sample1 をベースに開発を進めます。
+ROM 化した sample1 を、そのままコピーしてから始めます。
+
+     % cd asp/OBJ_MRUBY_TECS/STM32F7DISCOVERY_GCC
+     % cd b_sample1_rom
+     % make clean
+     % cd ..
+     % mkdir c_mruby
+     % cd c_mruby
+     % cp * ../c_mruby
+
+### 修正ファイル
+
+修正が必要なものは、以下のファイルです。
+
+ * Makefile
+ * sample1.cfg
+ * nMruby_tMrubyVM.c
+ * tMruby.cdl
+ * target_stddef.h
+
+以下、簡単に修正内容について説明します。
+
+#### Makefile の変更
+
+Makefile の修正箇所は、たくさんありますが、変更の主旨は、以下の3点です。
+
+ * TECS ジェネレータ実行および TECS 関係のオブジェクトのリンク
+ * mruby へのパスと libmrby.a のリンク
+ * TLSF へのパスとオブジェクトのリンク
+
+#### sample1.cfg の変更
+
+TECS ジェネレータにより生成される cfg ファイルを取り込みます。
+
+ * tecsgen.cfg の INCLUDE
+
+#### nMruby_tMrubyVM.c の変更
+
+ TECS ジェネレータ V1.7.0 に同梱されている nMruby_tMrubyVM.c は mruby 3.0.0 に対応しません。
+ この点を修正します。
+
+ また、nMruby_tMrubyVM.c に mruby が参照する API で、必要のないもののダミー定義が
+ このファイルに記載されていました。
+ これは実装により変わるものですので、ここへダミー定義を入れておくのは
+ 汎用性の観点でよろしくありませんので、ここから外しました。
+
+#### tMruby.cdl
+
+依存関係を tecs.timestamp から $(GEN_DIR)/tecsgen.timestamp に変更しています。
+この変更は TECS ジェネレータ(tecsgen) V1.3.1.0 であれば影響しません。
+
+#### target_stddef.h
+
+target/stm32f7discovery_gcc/target_stddef.h で stdint.h をインクルードするようにします。
+さもないとビルド時にエラーが発生するようになります。
+
+修正前
+
+     #define TOPPERS_STDINT_TYPE1
+
+修正後
+
+     // #define TOPPERS_STDINT_TYPE1
+     #ifndef TOPPERS_MACRO_ONLY
+     #include <stdint.h>
+     #endif // TOPPERS_MACRO_ONLY
+
+
+### 追加ファイル
+
+以下のファイルを追加します。
+
+ * my_mruby.cdl
+ * my_mruby.rb
+ * tMrubyStarter.c
+ * dummy.c
+
+以下、簡単に内容を説明します。
+
+#### my_mruby.cdl 
+
+TECS コンポーネント記述言語 （TECS CDL）による記述です。
+
+mruby VM が動作するタスク (MrubyTas)、mruby VM (Mruby) が定義されています。
+タスクのスタックサイズや優先度、ヒープサイズなど調整すべき要素が、この CDL ファイルに集約されています。また、セルが定義されているセルタイプのみ、コンパイル、およびリンクされるように Makefile が調整されますので、cfg ファイル、Makefile を触る必要がなくなります。
+
+MrubyStarter は、開始終了メッセージを syslog に出力するものですが、必須ではありません。
+MrubyTask の結合先を変更して、MrubyStarter セルの定義をコメントアウトして
+ビルドしなおすと、完全に取り除くことができます。
+tMrubyVMStarter セルタイプの定義は、残しておいてもリンクされることはありません。
+リンクするオブジェクト (.o) は自動的に調整されます。
+
+#### my_mruby.rb
+
+これは mruby のスクリプトです。
+この例では、mruby が無事に動作したことを確認するために
+メッセージを表示するものとなっています。
+
+#### tMrubyStarter.c
+
+少しスリープした後、メッセージを出力したのち、mruby VM を呼び出します。
+
+#### dummy.c
+
+mruby VM は、組込み用と言っても組込み Linux のような POSIX 環境が前提のようです。
+dummy.c では、不足する API のダミー関数を定義しています。
+これらの API は、環境によっては提供される可能性がありますので、
+nMruby_tMrubyVM.c から外してあります。
+
+### ビルド
+
+ビルドは、以下のコマンドで実行できます。
+
+    % make
+
+my_mruby.rb は、mrbc コマンドによりコンパイルされて
+バイトコード (mruby 仮想マシンの機械語) に変換されたものが
+リンクされます。
+
+ビルドに成功したら **SMT32F746 Discovery Kit** の ROM に書き込んで
+実行してみましょう。
+Tera Term に "Welcome to mruby & TECS" と表示されたら成功です。
 
 ## 現在の状況
 
@@ -175,4 +301,5 @@ TOPPERS BASE PLATFORM に合わせたクロスビルド用のスクリプト
 1) 非 TECS 版 sample1 のビルド
 1) 非 TECS 版 sample1 を ROM 化対応してビルド
 1) mruby VM のビルド
+1) TECS BASE PLATFORM へ mruby VM を組み込む
 

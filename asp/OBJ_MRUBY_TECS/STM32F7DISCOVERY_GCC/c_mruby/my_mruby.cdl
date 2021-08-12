@@ -1,0 +1,47 @@
+/*
+ * TOPPERS/ASP カーネルの定義を取り込む
+ */
+import( <kernel.cdl> );
+
+/*
+ * mruby VM の定義を取り込む
+ */
+import( <tMruby.cdl> );
+
+/*
+ * mruby VM の開始、終了時にメッセージを出力する
+ */
+celltype tMrubyStarter {
+    entry sTaskBody eBody;
+    call  sTaskBody cBody;
+};
+
+/*
+ * mruby を動作させるタスク
+ */
+cell tTask MrubyTask {
+    taskAttribute = C_EXP("TA_ACT");
+    // exceptionAttribute = C_EXP("TA_NULL");
+    priority   = C_EXP("MID_PRIORITY");
+    stackSize  = 4096;
+//    cBody      = Mruby.eMrubyBody; // MrubyStarter が不要の場合
+    cBody      = MrubyStarter.eBody;
+};
+
+/* 
+ * mruby VM の開始、終了を表示するためのセル
+ */
+cell tMrubyStarter MrubyStarter {
+    cBody      = Mruby.eMrubyBody;
+};
+
+/*
+ * mruby VM
+ *  内部で TLSF アロケータも含まれる
+ */
+cell nMruby::tMruby Mruby {
+    mrubyFile = "my_mruby.rb";
+    memoryPoolSize = 192 * 1024;    // 128KByte
+};
+
+
