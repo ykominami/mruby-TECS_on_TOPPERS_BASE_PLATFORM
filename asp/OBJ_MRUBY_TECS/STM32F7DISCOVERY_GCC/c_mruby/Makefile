@@ -399,6 +399,7 @@ ifndef KERNEL_LIB
 	rm -f libkernel.a
 endif
 	rm -f makeoffset.s offset.h
+	rm -f Mruby_MrubyVM_mrb.c
 	rm -rf $(GEN_DIR)
 
 .PHONY: cleankernel
