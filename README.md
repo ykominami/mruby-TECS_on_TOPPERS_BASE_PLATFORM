@@ -77,6 +77,19 @@ TECS WG から [TECS 簡易パッケージ](https://www.toppers.jp/tecs_archive.
  3. TECS 版 tSample1 のビルド
  4. mruby で tSample1 の実現
 
+ ## 非 TECS 版 sample1 のビルド
+
+ 非 TECS 版の sample1 は、TOPPERS/ASP の標準的なサンプルです。本題では、ありませんが、まずは基本形ができていることが重要ですので、ここからスタートです。
+
+     % cd asp/
+     % mkdir -p OBJ_MRUBY_TECS/STM32F7DISCOVERY_GCC/a_sample1
+     % ../../../configure -T stm32f7discovery_gcc
+     % make
+
+これで asp.srec ができましたら ROM モニタ上で実行できます。
+ROM モニタの書き込み方法は、TOPPERS BASE PLATFORM(asp_baseplatformv1.3.0_052018.tar.gz) に同梱の「ＴＯＰＰＥＲＳ基礎実装セミナー （STM32F4-Discovery版：基本）　開発環境」(BaseTrainingSeminar_environment-020010002.pdf) の ROM モニタの書き込みを参照してください。
+
+実行には Tera Term を起動して出力を確認します。これも上記の資料に詳しく説明されています。
 
 ### 現在の状況
 
