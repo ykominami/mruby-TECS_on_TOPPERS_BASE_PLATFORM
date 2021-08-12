@@ -7,7 +7,7 @@
  *  Copyright (C) 2015      by 3rd Designing Center
  *              Imageing System Development Division RICOH COMPANY, LTD.
  * 
- *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
+ *  上記著作権者は，以下の(1)~(4)の条件を満たす場合に限り，本ソフトウェ
  *  ア（本ソフトウェアを改変したものを含む．以下同じ）を使用・複製・改
  *  変・再配布（以下，利用と呼ぶ）することを無償で許諾する．
  *  (1) 本ソフトウェアをソースコードの形で利用する場合には，上記の著作
@@ -62,7 +62,10 @@
  *  開発環境でstdint.hが用意されている場合には，TOPPERS_STDINT_TYPE1の
  *  マクロ定義を削除し，stdint.hをインクルードすればよい．
  */
-#define TOPPERS_STDINT_TYPE1
+// #define TOPPERS_STDINT_TYPE1
+#ifndef TOPPERS_MACRO_ONLY
+#include <stdint.h>
+#endif // TOPPERS_MACRO_ONLY
 #define TOPPERS_STDFLOAT_TYPE1
 #define _SYS__STDINT_H
 #define _STDINT_H
