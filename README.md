@@ -91,10 +91,44 @@ ROM モニタの書き込み方法は、TOPPERS BASE PLATFORM(asp_baseplatformv1
 
 実行には Tera Term を起動して出力を確認します。これも上記の資料に詳しく説明されています。
 
+## 非 TECS 版 sample1 を ROM 化対応してビルド
+
+SMT32F746 Discovery Kit の CPU ローカルな RAM は 320KB しかありません。このため mruby VM を実装すると RAM にロードしてデバッガ実行することができません。
+
+このため、ROM に焼いて実行するようにします。まずは、Makefile を修正してビルドしなおす必要があります。
+
+RAM 動作版とは、別の環境でビルドすることにします。RAM 動作版と同じディレクトリから始めることとします。まずは、コンフィグレータまで、実行します。
+
+     % cd asp/OBJ_MRUBY_TECS/STM32F7DISCOVERY_GCC
+     % mkdir b_sample1_rom
+     % ../../../configure -T stm32f7discovery_gcc
+
+Makefile の以下の行を変更する必要があります。
+
+修正前
+
+    DBGENV :=
+
+修正後
+
+    DBGENV := ROM
+
+Makefile の修正が終わりましたら、ビルドします。
+
+    % make
+
+念のため期待したようにビルドされているか確認しましょう。確認するには asp.syms を参照します。以下のように text領域 (機械語命令が置かれる領域) が 0x08000000 番地から始まっていれば成功です。
+
+    08000000 T __text
+
+これは ROM の開始アドレスですが、使用する CPU やボードに依存します。RAM 実行版では RAM の開始アドレスである 0x20000000 になっていましたので、併せて確認してみてください。
+
 ### 現在の状況
 
 1) 初期チェックイン asp_baseplatformv1.3.0, mruby-3.0.0
 1) 追加チェックイン asp-1.9.3, asp_arch_arm_m7_gcc, TLSF-2.4.6
 1) 追加チェックイン tecsgen-1.7.0
 1) 方針、進め方まで記載
+1) 非 TECS 版 sample1 のビルド
+1) 非 TECS 版 sample1 を ROM 化対応してビルド
 
