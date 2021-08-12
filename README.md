@@ -295,6 +295,53 @@ Tera Term に "Welcome to mruby & TECS" と表示されたら成功です。
 起動後 5秒で表示されるようになっています。
 出力されるメッセージを眺めていて、見逃さないようにしてください。
 
+## TECS 版 tSample1
+
+次は TECS 版 tSample1 のビルドです。
+これは mruby 版 tSample1 を作るための中間ステップとして実行します。
+TECS 化すると、MrubyBridgePlugin により、mruby から TECS コンポーネントを呼び出すコードを自動生成できるため、まずは TECS 化します。
+
+### ビルドディレクトリ
+
+今回は d_tSample1 をビルドディレクトリとします。
+
+### Makefile
+
+Makefile は、b_sample1_rom のものをベースに c_mruby で行った内、
+以下の部分だけ変更を加えます。
+
+ * TECS ジェネレータ実行および TECS 関係のオブジェクトのリンク
+
+### tSerialWrapper, tSysLogWrapper
+
+TOPPERS/ASP には、標準で TECS 化されたシリアルやログが含まれていません(ASP3 には標準え含まれています)。
+真面目にやろうとすると、シリアルの TECS コンポーネント化もすべきですが、
+今回は、既存のシリアルやログに対するラッパーとして、これらを実現します。
+
+TECS簡易パッケージから持ってきた tSerial.cdl, tSysLog.cdl のシグニチャはそのままに、
+セルタイプを変更して tSerialWrapper.cdl, tSysLogWrapper.cdl を作成しました。
+結合の変更が CDL の中だけで行えるため、セルタイプを変更しても呼出し元の
+ C 言語のプログラムを触らずにすみます。
+
+これらは syssvc ディレクトリ下に置かれています。
+
+### tSample1.cdl, tSample1.c, tSample1.cfg, tSample1.h 
+
+これらは、TECS簡易パッケージから持ってきたものです。
+
+tSample1.cdl は TECS簡易パッケージから持ってきたものを、上述の tSerialWrapper, tSysLogWrapper に合わせる変更をしています。
+
+### ビルド
+
+準備は完了しました。ビルドしましょう。
+
+    % make
+
+成功したら、TECS 版 tSample1 を動かしてみてください。
+非 TECS 版と、動作は何も変わりませんから、何も感動は、ないかもしれませんね。
+
+
+
 ## 現在の状況
 
 1) 初期チェックイン asp_baseplatformv1.3.0, mruby-3.0.0
@@ -305,4 +352,4 @@ Tera Term に "Welcome to mruby & TECS" と表示されたら成功です。
 1) 非 TECS 版 sample1 を ROM 化対応してビルド
 1) mruby VM のビルド
 1) TECS BASE PLATFORM へ mruby VM を組み込む
-
+1) TECS 版 tSample1
