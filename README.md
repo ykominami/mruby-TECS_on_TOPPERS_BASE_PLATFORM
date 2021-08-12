@@ -41,14 +41,47 @@ Linux や MacOS でビルドする場合には、それらようの環境に合�
 * [TOPPERS新世代カーネル用コンフィグレータ](https://www.toppers.jp/cfg-download.html) ([cfg-1.9.6](https://www.toppers.jp/download.cgi/cfg-mingw-static-1_9_6.zip))
 
 
-### 使用モジュールの展開
+使用モジュールは、本リポジトリにすべて展開済みですので、チェックアウトして、そのままビルドできます。
 
-使用モジュールは、本リポジトリにすべて展開済みです。
+asp-1.9.3.tar.gz, asp_arch_arm_m7_gcc-1.9.5.tar.gz, asp_baseplatformv1.3.0_052018.tar.gz, mruby-3.0.0.tar.gz は、開発用ルートディレクトリで、そのまま解凍します。
+
+TLSF-2.4.6.tbz2 は、asp ディレクトリ下で解凍してください。
+
+tecsgen-1.7.0.tgz は、解凍後 tecsgen-1.7.0/tecsgen ディレクトリを asp ディレクトリ下へ移動してください。移動後、残ったものは削除してください。
+
+使用モジュールに含めていませんでしたが、後述のとおりTECS 簡易パッケージから tecs_kernel ディレクトリを持ってきています。さらに syssvc ディレクトリから必要なファイルを抜き出して持ってきています。
+
+## TECS 化の方針
+
+TOPPERS BASE PLATFORM で使用している TOPPERS/ASP カーネルは、公式リリースとしては TECS に対応していません。
+
+TECS WG から [TECS 簡易パッケージ](https://www.toppers.jp/tecs_archive.html) として公開されていますが、メンテナンスれていません。
+
+このため、TOPPERS/ASP を TECS 化する必要があります。
+
+以下の方針で TECS 化します。
+
+* kernel.cdl および、そこに定義されているセルタイプのセルタイプコードは、TECS 簡易パッケージに含まれているものを使用する
+
+* tSerial, tSysLog は、標準の TOPPERS/ASP のラッパーとして実装する (TECS簡易パッケージに含まれているものは TOPPERS/ASP3 と同様に、フルに TECS 化されている)
+
+余談ですが TOPPERS/ASP簡易パッケージ、 TOPPERS/ASP3 で tSysLog がフルに TECS 化されているのは、ターゲットによりカスタマイズされることが多いため、可変点として、その部分を切り出してコンポーネント化がなされました。
+
+## 進め方
+
+以下の4つについて Step by step で進めていきます。
+
+ 1. 非 TECS 版 sample1 のビルド
+ 2. 非 TECS 版 sample1 を ROM 化対応してビルド
+ 2. mruby VM を実装してのビルド
+ 3. TECS 版 tSample1 のビルド
+ 4. mruby で tSample1 の実現
+
 
 ### 現在の状況
 
 1) 初期チェックイン asp_baseplatformv1.3.0, mruby-3.0.0
 1) 追加チェックイン asp-1.9.3, asp_arch_arm_m7_gcc, TLSF-2.4.6
 1) 追加チェックイン tecsgen-1.7.0
-
+1) 方針、進め方まで記載
 
