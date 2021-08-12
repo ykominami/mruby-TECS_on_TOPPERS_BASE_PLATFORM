@@ -54,7 +54,7 @@ extern "C" {
 /*
  *  シリアルインタフェースドライバの用いるパケット
  */
-typedef struct {
+typedef struct TAG_T_SERIAL_RPOR{
 	uint_t		reacnt;			/* 受信バッファ中の文字数 */
 	uint_t		wricnt;			/* 送信バッファ中の文字数 */
 } T_SERIAL_RPOR;

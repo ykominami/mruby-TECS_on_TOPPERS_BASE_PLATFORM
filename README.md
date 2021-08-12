@@ -340,7 +340,59 @@ tSample1.cdl は TECS簡易パッケージから持ってきたものを、上�
 成功したら、TECS 版 tSample1 を動かしてみてください。
 非 TECS 版と、動作は何も変わりませんから、何も感動は、ないかもしれませんね。
 
+## mruby で tSample1 の実現
 
+それでは、いよいよ tSample1 の mruby 版にとりかかります。
+これは、mruby のスクリプトから TOPPERS/ASP のカーネルオブジェクトを操作するサンプルになります。
+
+### ビルドディレクトリ
+
+ e_tSample1Mruby をビルドディレクトリとします。
+
+### tSample1Mruby.cdl
+
+これは、tSample1.cdl をベースに改造を加えます。
+
+MainTask は、mruby VM を動作させるタスクに変えられます。
+
+すべてのセルに MrubyBridgePluin を適用します。
+
+    [generate(MrubyBridgePlugin,"")]
+    cell tTask MainTask ...
+
+これでセルの受け口関数を mruby から呼び出すことが可能になります。
+
+ただし MrubyBridgePlugin の扱うことのできない引数 (の型) を持つ関数は、自動的に外されます (auto_exclude される) ので、
+気を付けてください。
+このような関数を呼び出したい場合、MrubyBridgePlugin で扱える引数に変更した
+シグニチャを準備し、ラッピングするセルタイプを作ってください。
+
+### tSample1Mruby.rb
+
+tSample1.c の内、MainTask により処理される関数を mruby スクリプトに置き換えました。
+C 言語の関数をコメントとして残していますので、対比してみてください。
+
+### tSample1Mruby.c
+
+tSample1 を mruby 化しましたけれど、サブタスクから呼び出される部分は mruby 化されていません。
+そのため tSample1Mruby.c には、サブタスクから呼び出される部分が残りました。
+
+### serial.h の修正
+
+MrubyBridgePlugin は、タグ名のない構造体をうまく扱えません。このため serial.h 内の T_SERIAL_RPOR 型の構造体にタグ名 TAG_T_SERIAL_RPOR を付与しています。
+
+この制約は、C言語のコンパイル時に、わかりにくいエラーとなって現れます。
+本来であれば、TECS ジェネレータや MrubyBridgePlugin で、エラーにならないようなコードを生成すべきですが、現状では解決できていません。
+C言語プログラムのコンパイル時に struct TAG_2_TECS_internal__ (internal__ が目安) のような構造体のエラーが出てきたら、このことを思い出してください。
+
+### ビルド
+
+準備は完了しました。ビルドしましょう。
+
+    % make
+
+成功したら、mruby+TECS 版 tSample1Murby を動かしてみてください。
+カーネルオブジェクトは、すべて mruby スクリプトにより制御されています。mruby から RTOS を操作できるなんて、素敵ですよね！
 
 ## 現在の状況
 
