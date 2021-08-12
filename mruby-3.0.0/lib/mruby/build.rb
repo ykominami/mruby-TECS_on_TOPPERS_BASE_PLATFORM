@@ -376,7 +376,7 @@ EOS
       if name.is_a?(Array)
         name.flatten.map { |n| filename(n) }
       else
-        name.gsub('/', file_separator)
+        name.relative_path.gsub('/', file_separator)
       end
     end
 

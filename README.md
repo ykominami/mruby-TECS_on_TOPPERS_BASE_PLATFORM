@@ -123,7 +123,50 @@ Makefile の修正が終わりましたら、ビルドします。
 
 これは ROM の開始アドレスですが、使用する CPU やボードに依存します。RAM 実行版では RAM の開始アドレスである 0x20000000 になっていましたので、併せて確認してみてください。
 
-### 現在の状況
+##  mruby VM のビルド
+
+先に mruby をビルドしておきます。
+ホスト環境用と、ARM 用をビルドします。
+
+### ホスト環境用をビルド
+
+初めにホスト用の mruby をビルドします。
+これは、mruby コンパイラ mrbc を使用するため必要となります。
+
+    % cd mruby-3.0.0
+    % make
+
+### ビルドスクリプトの変更
+
+arm 用 mruby をビルドする前に、ビルドスクリプトを少し変更します。
+
+mruby のビルドスクリプトを実行すると、コンパイラを呼び出すときに、絶対パスでファイル名を指定するように組まれています。
+
+今回使用する ARM コンパイラは、非 cygwin のものであるため、このことが問題になります。
+相対パスであれば、問題ありません。
+
+本格的な修正案は、ykominami さんが、[こちら](https://github.com/ykominami/mruby) で相対パスを指定する拡張を公開してくだっていますが、ここでは安直に相対パスを指定するように変更します。
+
+[mruby-3.0.0/lib/mruby/build.rb](https://github.com/hiro22022/mruby-TECS_on_TOPPERS_BASE_PLATFORM/blob/main/mruby-3.0.0/lib/mruby/build.rb) の filename メソッドを変更します。
+
+    変更前)   # name.gsub('/', file_separator)    
+    変更後)   name.relative_path.gsub('/', file_separator)
+
+### ARM 用 mruby のビルド
+
+TOPPERS BASE PLATFORM に合わせたクロスビルド用のスクリプト
+[mruby-3.0.0/build_config/toppers_arm_m7.rb](https://github.com/hiro22022/mruby-TECS_on_TOPPERS_BASE_PLATFORM/blob/main/mruby-3.0.0/build_config/toppers_arm_m7.rb)
+を用意します。
+
+コンパイラのオプションは、Makefile.target, Makefile.chip で指定されているものと合わせる必要があります。
+合っていなくても、リンク時にエラーにならないので、ビルド後に動作しない場合、チェックすべき一つになります。
+
+ビルドコマンドは、以下の通りです。rake コマンドにクロスビルド用のスクリプトを指定します。
+
+    % rake MRUBY_CONFIG=toppers_arm_m7
+
+
+## 現在の状況
 
 1) 初期チェックイン asp_baseplatformv1.3.0, mruby-3.0.0
 1) 追加チェックイン asp-1.9.3, asp_arch_arm_m7_gcc, TLSF-2.4.6
@@ -131,4 +174,5 @@ Makefile の修正が終わりましたら、ビルドします。
 1) 方針、進め方まで記載
 1) 非 TECS 版 sample1 のビルド
 1) 非 TECS 版 sample1 を ROM 化対応してビルド
+1) mruby VM のビルド
 
