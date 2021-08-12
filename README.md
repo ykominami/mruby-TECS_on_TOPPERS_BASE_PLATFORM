@@ -218,12 +218,12 @@ TECS ジェネレータにより生成される cfg ファイルを取り込み�
 #### tMruby.cdl
 
 依存関係を tecs.timestamp から $(GEN_DIR)/tecsgen.timestamp に変更しています。
-この変更は TECS ジェネレータ(tecsgen) V1.3.1.0 であれば影響しません。
+この変更は TECS ジェネレータ(tecsgen) V1.3.1.0 であれば影響しません。この変更は、次の TECS ジェネレータリリースに含まれます。
 
 #### target_stddef.h
 
 target/stm32f7discovery_gcc/target_stddef.h で stdint.h をインクルードするようにします。
-さもないとビルド時にエラーが発生するようになります。
+さもないとビルド時にエラーが発生します。mruby.h と TOPPERS/ASP のヘッダを同時に取り込むことで、このエラーは発生しています。
 
 修正前
 
