@@ -22,7 +22,7 @@ celltype tMrubyStarter {
 cell tTask MrubyTask {
     taskAttribute = C_EXP("TA_ACT");
     // exceptionAttribute = C_EXP("TA_NULL");
-    priority   = C_EXP("MID_PRIORITY");
+    priority   = C_EXP("MID_PRIORITY-1");  // MID_PRIORITY より、高くしておく
     stackSize  = 4096;
 //    cBody      = Mruby.eMrubyBody; // MrubyStarter が不要の場合
     cBody      = MrubyStarter.eBody;

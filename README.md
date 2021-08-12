@@ -40,6 +40,7 @@ Linux や MacOS でビルドする場合には、それらようの環境に合�
 * [Tera Term](https://ja.osdn.net/projects/ttssh2/) ([teraterm-4.106](https://ja.osdn.net/projects/ttssh2/downloads/74780/teraterm-4.106.exe/))
 * [TOPPERS新世代カーネル用コンフィグレータ](https://www.toppers.jp/cfg-download.html) ([cfg-1.9.6](https://www.toppers.jp/download.cgi/cfg-mingw-static-1_9_6.zip))
 
+## 使用モジュールの展開
 
 使用モジュールは、本リポジトリにすべて展開済みですので、チェックアウトして、そのままビルドできます。
 
@@ -55,7 +56,7 @@ tecsgen-1.7.0.tgz は、解凍後 tecsgen-1.7.0/tecsgen ディレクトリを as
 
 TOPPERS BASE PLATFORM で使用している TOPPERS/ASP カーネルは、公式リリースとしては TECS に対応していません。
 
-TECS WG から [TECS 簡易パッケージ](https://www.toppers.jp/tecs_archive.html) として公開されていますが、メンテナンスれていません。
+TECS WG から [TECS 簡易パッケージ](https://www.toppers.jp/tecs_archive.html) として公開されていますが、メンテナンスれていません (TOPPERS/ASP3, HRP3 用であれば、標準に組み込まれていて、メンテナンスされています)。
 
 このため、TOPPERS/ASP を TECS 化する必要があります。
 
@@ -291,6 +292,8 @@ my_mruby.rb は、mrbc コマンドによりコンパイルされて
 ビルドに成功したら **SMT32F746 Discovery Kit** の ROM に書き込んで
 実行してみましょう。
 Tera Term に "Welcome to mruby & TECS" と表示されたら成功です。
+起動後 5秒で表示されるようになっています。
+出力されるメッセージを眺めていて、見逃さないようにしてください。
 
 ## 現在の状況
 
