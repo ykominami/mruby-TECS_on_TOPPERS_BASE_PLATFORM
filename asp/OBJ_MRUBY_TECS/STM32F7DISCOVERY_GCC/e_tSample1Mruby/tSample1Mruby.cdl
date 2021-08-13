@@ -1,0 +1,208 @@
+/*
+ *		サンプルプログラム(1)のコンポーネント記述ファイル
+ */
+
+/*
+ *
+ */
+import_C( "tecs.h" );
+
+/*
+ *  カーネルオブジェクトの定義
+ */
+import("kernel.cdl");
+
+import_C( "tSample1Mruby.h" );
+
+/*
+ *  ターゲット依存のシステムサービスコンポーネントの定義
+ */
+// import("target_syssvc_decl.cdl");
+
+/*
+ *  シリアルドライバの定義
+ */
+// import("syssvc/tSerialPort.cdl");
+import("syssvc/tSerialPortWrapper.cdl");
+
+/*
+ *  システムログ機能の定義
+ */
+// import("syssvc/tSysLog.cdl");
+import("syssvc/tSysLogWrapper.cdl");
+
+// +------------------------------------
+// /*
+//  *  システムログタスクの定義
+//  */
+// import("syssvc/tLogTask.cdl");
+// ------------------------------------+
+
+/*
+ *  ターゲット依存のシステムサービスコンポーネントの組み上げ記述
+ */
+// import("target_syssvc_inst.cdl");
+
+/*
+ *  サンプルプログラムの定義
+ */
+[singleton]
+celltype tSample1Mruby {
+	require tKernel.eKernel;// 呼び口名なし（例：delay）
+	//require cKernel = tKernel.eKernel;// 呼び口名あり（例：cKernel_delay）
+	require ciKernel = tKernel.eiKernel;// 呼び口名あり（例：ciKernel_）
+
+	call sTask		    cTask[4];	/* タスク操作 */
+	call sCyclic        cCyclic;
+	call sAlarm         cAlarm;
+
+	call sSerialPort	cSerialPort;	/* シリアルドライバとの接続 */
+	call sSysLog		cSysLog;		/* システムログ機能との接続 */
+	
+	entry sTaskBody		eMainTask;	  /* Mainタスク */
+	entry sTaskBody		eSampleTask[3];/* 並行実行されるタスク */
+	entry sTaskExceptionBody	eSampleException[3];/* タスク例外処理ルーチン */
+	
+	entry siHandlerBody eiCyclicHandler;/* 周期ハンドラ*/
+	entry siHandlerBody eiAlarmHandler; /* アラームハンドラ */
+};
+
+/*
+ *  組み上げ記述
+ */
+
+// +---　 本来の実装 ここから
+// cell tSerialPort SerialPort1 {
+// 	/* 呼び口の結合 */
+// 	cSIOPort = SIOPortTarget.eSIOPort;
+// 	receiveBufferSize = 256;
+// 	sendBufferSize = 256;
+// };
+// 
+// cell tSysLog SysLog {
+// 	/* 呼び口の結合 */
+// 	cPutLog = PutLogTarget.ePutLog;
+// 	logBufferSize = 32;
+// };
+//       ここまで本来の実装   ---+
+
+// ラッパー実装
+[generate(MrubyBridgePlugin,"")]
+cell tSerialPortWrapper SerialPort1 {
+	portid = C_EXP( "TASK_PORTID" );
+};
+
+[generate(MrubyBridgePlugin,"")]
+cell tSysLogWrapper SysLog {
+};
+
+// +------------------------------------
+// cell tLogTask LogTask {
+// 	/* 呼び口の結合 */
+// 	cSerialPort = SerialPort1.eSerialPort;
+// 	cnSerialPort = SerialPort1.enSerialPort;
+// 	cSysLog = SysLog.eSysLog;
+// 	cPutLog = PutLogTarget.ePutLog;
+// 	/* 属性の設定 */
+// 	taskAttribute = C_EXP("TA_ACT");
+// 	priority = 3;
+// 	stackSize = LogTaskStackSize;
+// 	
+// };
+// ------------------------------------+
+
+[generate(MrubyBridgePlugin,"")]
+cell tKernel ASPKernel{
+};
+
+[generate(MrubyBridgePlugin,"")]
+cell tTask MainTask {
+	/* 呼び口の結合 */
+	cBody = MrubyStarter.eBody;
+	/* 属性の設定 */
+	taskAttribute = C_EXP("TA_ACT");
+	priority = C_EXP("MAIN_PRIORITY");
+	stackSize = C_EXP("STACK_SIZE");
+};
+
+import( <tMruby.cdl> );
+
+/*
+ * MrubyStarter
+ *   開始終了のメッセージを表示する
+ */
+celltype tMrubyStarter {
+    entry sTaskBody eBody;
+    call  sTaskBody cBody;
+};
+
+cell tMrubyStarter MrubyStarter {
+    cBody      = Mruby.eMrubyBody;
+};
+
+/*
+ * MrubyVM
+ */
+cell nMruby::tMruby Mruby {
+    mrubyFile = "tSample1Mruby.rb";
+    memoryPoolSize = 192 * 1024;    // 128KByte
+	cInit = VM_TECSInitializer.eInitialize;
+};
+
+[generate(MrubyBridgePlugin,"")]
+cell tTask Task1 {
+	/* 呼び口の結合 */
+	cBody = Sample1.eSampleTask[0];
+	cExceptionBody = Sample1.eSampleException[0];
+	  /* 属性の設定 */
+	priority = C_EXP("MID_PRIORITY");
+	stackSize = C_EXP("STACK_SIZE");
+};
+
+[generate(MrubyBridgePlugin,"")]
+cell tTask Task2 {
+	/* 呼び口の結合 */
+	cBody = Sample1.eSampleTask[1];
+	cExceptionBody = Sample1.eSampleException[1];
+	/* 属性の設定 */
+	priority = C_EXP("MID_PRIORITY");
+	stackSize = C_EXP("STACK_SIZE");
+};
+
+[generate(MrubyBridgePlugin,"")]
+cell tTask Task3 {
+	/* 呼び口の結合 */
+	cBody = Sample1.eSampleTask[2];
+	cExceptionBody = Sample1.eSampleException[2];
+	/* 属性の設定 */
+	priority = C_EXP("MID_PRIORITY");
+	stackSize = C_EXP("STACK_SIZE");
+};
+
+[generate(MrubyBridgePlugin,"")]
+cell tCyclicHandler CyclicHandler {
+	/* 呼び口の結合 */
+	ciBody = Sample1.eiCyclicHandler;
+	/* 属性の設定 */
+	cyclicTime = 2000;
+};
+
+[generate(MrubyBridgePlugin,"")]
+cell tAlarmHandler AlarmHandler {
+	ciBody = Sample1.eiAlarmHandler;
+};
+
+[generate(MrubyBridgePlugin,"exclude_port=eSampleTask,exclude_port=eSampleException")]
+cell tSample1Mruby Sample1 {
+	/* 呼び口の結合 */
+	cTask[ 0 ] =MainTask.eTask;
+	cTask[ 1 ] =Task1.eTask;
+	cTask[ 2 ] =Task2.eTask;
+	cTask[ 3 ] =Task3.eTask;
+
+	cCyclic = CyclicHandler.eCyclic;
+	cAlarm  = AlarmHandler.eAlarm;
+
+	cSerialPort = SerialPort1.eSerialPort;
+	cSysLog = SysLog.eSysLog;
+};
