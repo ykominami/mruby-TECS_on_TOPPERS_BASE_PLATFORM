@@ -56,7 +56,7 @@ tecsgen-1.7.0.tgz は、解凍後 tecsgen-1.7.0/tecsgen ディレクトリを as
 
 TOPPERS BASE PLATFORM で使用している TOPPERS/ASP カーネルは、公式リリースとしては TECS に対応していません。
 
-TECS WG から [TECS 簡易パッケージ](https://www.toppers.jp/tecs_archive.html) として公開されていますが、メンテナンスれていません (TOPPERS/ASP3, HRP3 用であれば、標準に組み込まれていて、メンテナンスされています)。
+TECS WG から [TECS 簡易パッケージ](https://www.toppers.jp/tecs_archive.html) として公開されていますが、メンテナンスされていません (TOPPERS/ASP3, HRP3 用であれば、標準に組み込まれていて、メンテナンスされています)。
 
 このため、TOPPERS/ASP を TECS 化する必要があります。
 
@@ -72,11 +72,16 @@ TECS WG から [TECS 簡易パッケージ](https://www.toppers.jp/tecs_archive.
 
 以下の4つについて Step by step で進めていきます。
 
- 1. 非 TECS 版 sample1 のビルド
- 2. 非 TECS 版 sample1 を ROM 化対応してビルド
- 2. mruby VM を実装してのビルド
- 3. TECS 版 tSample1 のビルド
- 4. mruby で tSample1 の実現
+ 1. 非 TECS 版 sample1 のビルド (a_sample1)
+ 2. 非 TECS 版 sample1 を ROM 化対応してビルド (b_sample1_rom)
+ 2. mruby VM を実装してのビルド (c_mruby)
+ 3. TECS 版 tSample1 のビルド (d_tSample1)
+ 4. mruby で tSample1 の実現 (e_tSample1Mruby)
+
+括弧内は、ビルドディレクトリです。
+リポジトリには、ビルドディレクトリ名でタグを設定しています。
+それぞれのタグでは、ビルドディレクトリ以外、最小の変更にとどめています。
+変更差分を確認したい場合、タグ間の diff を参照してください。
 
  ## 非 TECS 版 sample1 のビルド
 
