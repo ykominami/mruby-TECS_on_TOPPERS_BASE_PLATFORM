@@ -912,8 +912,9 @@ EOT
   end
 
   #=== Namespace#すべてのシグニチャをたどる
-  def travers_all_signature # ブロック引数 { |signature|  }
-    proc = Proc.new    # このメソッドのブロック引数
+  def travers_all_signature &proc # ブロック引数 { |signature|  }
+    # obsolete
+    # proc = Proc.new    # このメソッドのブロック引数
     @signature_list.each{ |sig|
       proc.call sig
     }
@@ -931,8 +932,8 @@ EOT
   end
 
   #=== Namespace#すべてのセルタイプをたどる
-  def travers_all_celltype # ブロック引数 { |celltype|  }
-    proc = Proc.new    # このメソッドのブロック引数
+  def travers_all_celltype &proc # ブロック引数 { |celltype|  }
+    # proc = Proc.new    # このメソッドのブロック引数
     @celltype_list.each{ |ct|
       proc.call ct
     }

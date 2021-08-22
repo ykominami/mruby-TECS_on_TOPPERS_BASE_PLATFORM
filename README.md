@@ -40,6 +40,8 @@ Linux や MacOS でビルドする場合には、それらようの環境に合�
 * [Tera Term](https://ja.osdn.net/projects/ttssh2/) ([teraterm-4.106](https://ja.osdn.net/projects/ttssh2/downloads/74780/teraterm-4.106.exe/))
 * [TOPPERS新世代カーネル用コンフィグレータ](https://www.toppers.jp/cfg-download.html) ([cfg-1.9.6](https://www.toppers.jp/download.cgi/cfg-mingw-static-1_9_6.zip))
 
+cygwin には、gcc (レジデント用)、Ruby (V3.x 未対応) が必要ですので、setup からインストールしてください。
+
 ## 使用モジュールの展開
 
 使用モジュールは、本リポジトリにすべて展開済みですので、チェックアウトして、そのままビルドできます。
@@ -73,15 +75,19 @@ TECS WG から [TECS 簡易パッケージ](https://www.toppers.jp/tecs_archive.
 以下の4つについて Step by step で進めていきます。
 
  1. 非 TECS 版 sample1 のビルド (a_sample1)
- 2. 非 TECS 版 sample1 を ROM 化対応してビルド (b_sample1_rom)
- 2. mruby VM を実装してのビルド (c_mruby)
- 3. TECS 版 tSample1 のビルド (d_tSample1)
- 4. mruby で tSample1 の実現 (e_tSample1Mruby)
+ 2. 非 TECS 版 sample1 を ROM 化してビルド (b_sample1_rom)
+ 3. mruby VM のビルド (_build_mruby)
+ 4. mruby VM を実装 (c_mruby)
+ 5. TECS 版 tSample1 のビルド (d_tSample1)
+ 6. mruby で tSample1 の実現 (e_tSample1Mruby)
 
 括弧内は、ビルドディレクトリです。
 リポジトリには、ビルドディレクトリ名でタグを設定しています。
 それぞれのタグでは、ビルドディレクトリ以外、最小の変更にとどめています。
 変更差分を確認したい場合、タグ間の diff を参照してください。
+
+なお、Ruby 3.0 を使用される場合、最新をチェックアウトしてください。
+これらのタグがつけられたものは、Ruby 3.0 に対応していません。
 
  ## 非 TECS 版 sample1 のビルド
 
@@ -97,7 +103,7 @@ ROM モニタの書き込み方法は、TOPPERS BASE PLATFORM(asp_baseplatformv1
 
 実行には Tera Term を起動して出力を確認します。これも上記の資料に詳しく説明されています。
 
-## 非 TECS 版 sample1 を ROM 化対応してビルド
+## 非 TECS 版 sample1 を ROM 化してビルド
 
 SMT32F746 Discovery Kit の CPU ローカルな RAM は 320KB しかありません。このため mruby VM を実装すると RAM にロードしてデバッガ実行することができません。
 
@@ -300,7 +306,7 @@ Tera Term に "Welcome to mruby & TECS" と表示されたら成功です。
 起動後 5秒で表示されるようになっています。
 出力されるメッセージを眺めていて、見逃さないようにしてください。
 
-## TECS 版 tSample1
+## TECS 版 tSample1 のビルド
 
 次は TECS 版 tSample1 のビルドです。
 これは mruby 版 tSample1 を作るための中間ステップとして実行します。
@@ -401,12 +407,15 @@ C言語プログラムのコンパイル時に struct TAG_2_TECS_internal__ (int
 
 ## 現在の状況
 
+基本編完了
+
 1) 初期チェックイン asp_baseplatformv1.3.0, mruby-3.0.0
 1) 追加チェックイン asp-1.9.3, asp_arch_arm_m7_gcc, TLSF-2.4.6
 1) 追加チェックイン tecsgen-1.7.0
 1) 方針、進め方まで記載
 1) 非 TECS 版 sample1 のビルド
-1) 非 TECS 版 sample1 を ROM 化対応してビルド
+1) 非 TECS 版 sample1 を ROM 化してビルド
 1) mruby VM のビルド
 1) TECS BASE PLATFORM へ mruby VM を組み込む
-1) TECS 版 tSample1
+1) TECS 版 tSample1 のビルド
+1) mruby で tSample1 の実現

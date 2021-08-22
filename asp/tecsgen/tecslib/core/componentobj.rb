@@ -234,11 +234,12 @@ class Signature < NSBDNode  # < Nestable
   #block:: ブロックを引数に取る
   # ブロックは2つの引数を受け取る  Decl, ParamDecl     ( Decl: 関数ヘッダ )
   # Port クラスにも each_param がある（同じ働き）
-  def each_param # ブロック引数 { |func_decl, param_decl| }
+  def each_param &pr # ブロック引数 { |func_decl, param_decl| }
     fha = get_function_head_array                       # 呼び口または受け口のシグニチャの関数配列
     return if fha == nil                                # nil なら文法エラーで有効値が設定されなかった
 
-    pr = Proc.new   # このメソッドのブロック引数を pr に代入
+    # obsolete Ruby 3.0 では使えなくなった
+    # pr = Proc.new   # このメソッドのブロック引数を pr に代入
     fha.each{ |fh|  # fh: FuncHead                      # 関数配列中の各関数頭部
       fd = fh.get_declarator                            # fd: Decl  (関数頭部からDeclarotorを得る)
       if fd.is_function? then                           # fd が関数でなければ、すでにエラー
@@ -4513,12 +4514,13 @@ end
   #block:: ブロックを引数として取る(ruby の文法で書かない)
   #  ブロックは3つの引数を受け取る(Port, Decl,      ParamDecl)    Decl: 関数ヘッダ
   # Signature クラスにも each_param がある（同じ働き）
-  def each_param # ブロック引数{  |port, func_decl, param_decl| }
+  def each_param &pr # ブロック引数{  |port, func_decl, param_decl| }
     return if @signature == nil                         # signature 未定義（既にエラー）
     fha = @signature.get_function_head_array            # 呼び口または受け口のシグニチャの関数配列
     return if fha == nil                                # nil なら文法エラーで有効値が設定されなかった
 
-    pr = Proc.new   # このメソッドのブロック引数を pr に代入
+    # obsolete Ruby 3.0 では使用できない
+    # pr = Proc.new   # このメソッドのブロック引数を pr に代入
     port = self
     fha.each{ |fh|  # fh: FuncHead                      # 関数配列中の各関数頭部
       fd = fh.get_declarator                            # fd: Decl  (関数頭部からDeclarotorを得る)
