@@ -10,7 +10,7 @@ TECS を使うと、驚くほど簡単に移植できます。
 
 以下のターゲットデバイスを使用します。
 
-   **SMT32F746 Discovery Kit**
+   **STM32F746 Discovery Kit**
 
 TOPPERS BASE PLATFORM は、各種の ST 社のボードに対応しており、これ以外のデバイスでも、同様にできるはずです。  
 ROM 256KB, RAM 256KB 以上が必要です。RAM 実行する場合は、RAM 512KB 以上が必要です。
@@ -105,7 +105,7 @@ ROM モニタの書き込み方法は、TOPPERS BASE PLATFORM(asp_baseplatformv1
 
 ## 非 TECS 版 sample1 を ROM 化してビルド
 
-SMT32F746 Discovery Kit の CPU ローカルな RAM は 320KB しかありません。このため mruby VM を実装すると RAM にロードしてデバッガ実行することができません。
+STM32F746 Discovery Kit の CPU ローカルな RAM は 320KB しかありません。このため mruby VM を実装すると RAM にロードしてデバッガ実行することができません。
 
 このため、ROM に焼いて実行するようにします。まずは、Makefile を修正してビルドしなおす必要があります。
 
@@ -300,7 +300,7 @@ my_mruby.rb は、mrbc コマンドによりコンパイルされて
 バイトコード (mruby 仮想マシンの機械語) に変換されたものが
 リンクされます。
 
-ビルドに成功したら **SMT32F746 Discovery Kit** の ROM に書き込んで
+ビルドに成功したら **STM32F746 Discovery Kit** の ROM に書き込んで
 実行してみましょう。
 Tera Term に "Welcome to mruby & TECS" と表示されたら成功です。
 起動後 5秒で表示されるようになっています。
