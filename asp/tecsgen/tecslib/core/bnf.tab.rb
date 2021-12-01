@@ -5152,8 +5152,9 @@ end
 #  Ruby2.0(1.9) 対応に伴い導入したクラス
 #  SJIS 以外では、ASCII-8BIT として入力する
 class TECSIO
-  def self.foreach(file) # ブロック引数 { |line| }
-    pr = Proc.new   # このメソッドのブロック引数を pr に代入
+  def self.foreach(file, &pr) # ブロック引数 { |line| }
+    # obsolete
+    # pr = Proc.new   # このメソッドのブロック引数を pr に代入
     if $b_no_kcode then
 	  msg = "E".encode $Ruby19_File_Encode
       if( $Ruby19_File_Encode == "Shift_JIS" )
@@ -5198,9 +5199,12 @@ class TECSIO
       return str                          # Ruby V1.8 まで
     end
     if msg.encoding != str.encoding then
-      option = { :invalid => :replace, :undef => :replace }   # 例外を発生させず、'?' に変換する(utf-8 は 0xfffd)
+      # option = { :invalid => :replace, :undef => :replace, :replace => '?' }   # 例外を発生させず、'?' に変換する(utf-8 は 0xfffd)
+      option = nil   # Ruby 3.0 では、option に Hash を与えると例外となる
       # return str.encode( msg.encoding, option )
-      str = str.encode( "utf-8", option )
+      # str = str.encode( "utf-8", option )
+      p "message encoding:"
+      p msg.encoding
       return str.encode( msg.encoding, option )
     else
       return str
